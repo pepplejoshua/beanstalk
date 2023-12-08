@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  first_name      String
+  last_name       String
+  admin_user      Boolean           @default(false)
+  email           String            @unique
+  password        String
+  SaleEvent       SaleEvent[]
+  PurchaseEvent   PurchaseEvent[]
+  NewLays         NewLays[]
+  InvestmentEvent InvestmentEvent[]
+}
+
+enum EventType {
+  SALE
+  PURCHASE
+  NEW_LAYS
+  INVESTMENT
+}
+
+enum SnailSpec {
+  Ovum
+  Suturalis
+}
+
+model SaleEvent {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  created_at  DateTime    @default(now())
+  description String?
+  snail       SnailSpec[]
+  quantity    Int
+  price       Float
+  created_by  User        @relation(fields: [userId], references: [id])
+  userId      String      @db.ObjectId
+}
+
+model PurchaseEvent {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  created_at  DateTime    @default(now())
+  description String?
+  snail       SnailSpec[]
+  quantity    Int
+  price       Float
+  created_by  User        @relation(fields: [userId], references: [id])
+  userId      String      @db.ObjectId
+}
+
+model NewLays {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  created_at  DateTime    @default(now())
+  description String?
+  snail       SnailSpec[]
+  quantity    Int
+  created_by  User        @relation(fields: [userId], references: [id])
+  userId      String      @db.ObjectId
+}
+
+model InvestmentEvent {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at  DateTime @default(now())
+  description String?
+  amount      Float
+  created_by  User     @relation(fields: [userId], references: [id])
+  userId      String   @db.ObjectId
+}
+
+model Event {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  type            EventType
+  actual_event_id String
+}
