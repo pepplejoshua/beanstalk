@@ -1,5 +1,4 @@
 import type { MetaFunction } from "@remix-run/node";
-import { TButton } from "~/components/tbutton";
 
 export const meta: MetaFunction = () => {
   return [
@@ -11,14 +10,11 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <div>
-      <h1 className="text-2xl font-bold p-4">beanstalk</h1>
-
       <p className="p-4 text-xl">
-        An application for tracking, managing and displaying business events for
-        GreenBean Farms' Snail business.
+        A general application for managing inventory for GreenBean Farms, while
+        listing them as products on the web for sale, along with the product of
+        other farms, to create a digital farmers market.
       </p>
-
-      <TButton>Basic Button</TButton>
     </div>
   );
 }
