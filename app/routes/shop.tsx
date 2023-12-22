@@ -7,7 +7,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Products() {
+export default function Shop() {
   return (
     <div>
       <p className="p-4 text-xl">
