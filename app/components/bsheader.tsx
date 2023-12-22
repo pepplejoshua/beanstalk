@@ -3,12 +3,12 @@ import { NavLink } from "@remix-run/react";
 export function BSHeader() {
   return (
     <header className="flex flex-row justify-between items-center px-10">
-      <NavLink to="/" className={(_) => "text-3xl font-bold px-4"}>
+      <NavLink to="/" className={(_) => "text-2xl font-bold px-4"}>
         beanstalk
       </NavLink>
 
       {/* This is the section for links */}
-      <nav className="flex p-4 space-x-8 text-2xl">
+      <nav className="flex p-4 space-x-8 text-xl">
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -18,12 +18,12 @@ export function BSHeader() {
           home
         </NavLink>
         <NavLink
-          to="/products"
+          to="/shop"
           className={({ isActive }) =>
             isActive ? "font-bold border-y-2 border-current p-2" : "p-2"
           }
         >
-          products
+          shop
         </NavLink>
         <NavLink
           to="/about"
