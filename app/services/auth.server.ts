@@ -6,7 +6,11 @@ import invariant from "tiny-invariant";
 import * as bcrypt from "bcrypt";
 import { prisma } from "./prisma.server";
 
-export let authenticator = new Authenticator<User>(sessionStorage);
+// create an authenticator instance
+export let authenticator = new Authenticator<User>(sessionStorage, {
+  sessionErrorKey: 'auth-session-error',
+  sessionKey: 'auth-session',
+});
 
 // TODO(@pepplejoshua): replace the User type with a leaner type that only 
 // contains the necessary fields
@@ -19,7 +23,7 @@ authenticator.use(
     invariant(user_identification.length > 0, "user_identification must not be empty");
 
     invariant(typeof password === "string", "user_identification must be a string");
-    invariant(password.length > 0, "user_identification must not be empty");
+    invariant(password.length >= 8, "password must be at least 8 characters long");
 
     // try to find existing user
     let regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;

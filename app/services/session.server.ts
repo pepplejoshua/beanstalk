@@ -16,5 +16,6 @@ export let sessionStorage = createCookieSessionStorage({
     httpOnly: true, // restrict visibility. prevent client side js from accessing it
     secrets: [___s3cr3t___],
     secure: process.env.NODE_ENV === "production", // enable secure version only in production
+    maxAge: 60 * 60 * 24, // cookie will expire after 1 day
   },
 });
