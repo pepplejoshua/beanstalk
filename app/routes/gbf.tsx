@@ -1,10 +1,19 @@
-import { Form } from "@remix-run/react";
+import { redirect, type ActionFunctionArgs, type LoaderFunctionArgs, json } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
 import React from "react";
+import { authenticator } from "~/services/auth.server";
+import { sessionStorage } from "~/services/session.server";
 
 // this will be the entry point for the gbf area
 // it will present a login screen
 export default function GBF() {
   const [showPassword, setShowPassword] = React.useState(false);
+  // grab any data containing errors returned from the loader
+  // TODO(@pepplejoshua): return the user_identification and
+  // password together with the error so that we can prefill
+  // the login form with the user's input
+  const data = useLoaderData<typeof loader>();
+  const error = data.error?.message;
 
   const handleShowPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowPassword(event.target.checked);
@@ -16,7 +25,12 @@ export default function GBF() {
         <h1 className="text-6xl font-bold text-center">
           sign in to beanstalk
         </h1>
-        <div className="mt-20 w-full">
+
+        <div className="mt-20" hidden={!error}>
+          {error && <p className="text-red-500 text-2xl">{error}</p>}
+        </div>
+
+        <div className={error ? "mt-10 w-full"  : "mt-20 w-full"}>
           <input className="border-2 border-black pl-3 text-2xl py-4 rounded w-5/6 sm:w-4/5 md:w-2/3 lg:w-2/3 xl:w-2/3 2xl:w-2/3"
             type="text" name="user_identification" placeholder="email or username" required/>
         </div>
@@ -42,4 +56,47 @@ export default function GBF() {
       </Form>
     </div>
   )
+}
+
+export async function action({request}: ActionFunctionArgs) {
+  try {
+    // try to login and make sure all errors are thrown
+    let user = await authenticator.authenticate('gbf_login', request, {
+      failureRedirect: '/gbf',
+      throwOnError: true,
+    });
+
+    // do session stuff to set the user if the login was successful
+    let { getSession, commitSession } = sessionStorage;
+    let session = await getSession(request.headers.get('Cookie'));
+    session.set(authenticator.sessionKey, user);
+    let headers = new Headers({'Set-Cookie': await commitSession(session)});
+
+    // go home
+    return redirect('/home', {headers})
+  } catch (err) {
+    // if we get an error, we want to return a response
+    if (err instanceof Error) {
+      return new Response(err.message, {status: 401});
+    } else if (err instanceof Response) {
+      return err;
+    }
+  }
+}
+
+export async function loader({request}: LoaderFunctionArgs) {
+  // if the user is already logged in, redirect them to the home page
+  await authenticator.isAuthenticated(request, {
+    successRedirect: '/home',
+  });
+  
+  // otherwise, since we return to ourselves on a login error, we
+  // need to get the error from the session and return it from the 
+  // loader
+  let { getSession, commitSession } = sessionStorage;
+  let session = await getSession(request.headers.get('Cookie'));
+  let error = session.get(authenticator.sessionErrorKey);
+  return json({error}, {
+    headers: {'Set-Cookie': await commitSession(session)},
+  })
 }
