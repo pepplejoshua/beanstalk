@@ -1,12 +1,9 @@
 // see README.md of https://github.com/sergiodxa/remix-auth
 import { createCookieSessionStorage } from "@remix-run/node";
+import invariant from "tiny-invariant";
 
-const ___s3cr3t___ = `It would be compromising if anyone learned that your character is terrified of being judged.
-    It would be awkward if anyone learned that your character cannot ride a bicycle.
-    Few know that your character murdered an untamed scientist.
-    Few know that your character is terrified of embarassment.
-    Few know that your character is terrified of thunder.
-    It would be awkward if anyone learned that your character keeps a diary full of sensitive secrets.`;
+const ___s3cr3t___ = process.env.SESSION_SECRET;
+invariant(___s3cr3t___, "You must provide a SESSION_SECRET env variable");
 
 export let sessionStorage = createCookieSessionStorage({
   cookie: {
