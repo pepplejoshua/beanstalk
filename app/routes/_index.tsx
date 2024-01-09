@@ -1,4 +1,5 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { authenticator } from "~/services/auth.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -37,4 +38,10 @@ export default function Index() {
       {/* into the pinhole for external parties */}
     </div>
   );
+}
+
+export async function loader({request}: LoaderFunctionArgs) {
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: '/home',
+  });
 }
