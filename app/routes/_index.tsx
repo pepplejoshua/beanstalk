@@ -13,7 +13,7 @@ export const meta: MetaFunction = () => {
 // parties
 export default function Index() {
   return (
-    <div>
+    <div className="py-20">
       <section className="text-center">
         {/* Hero Section */}
         <h1 className="text-6xl font-bold text-center mb-5">

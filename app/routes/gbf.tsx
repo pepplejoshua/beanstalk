@@ -20,7 +20,7 @@ export default function GBF() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full py-20">
       <Form method="post" action="/gbf" className="text-center w-full">
         <h1 className="text-6xl font-bold text-center">
           sign in to beanstalk
