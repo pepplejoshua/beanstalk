@@ -6,14 +6,20 @@ import invariant from "tiny-invariant";
 import * as bcrypt from "bcrypt";
 import { prisma } from "./prisma.server";
 
+type AuthenticatedUser = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  username: string;
+  email: string;
+};
+
 // create an authenticator instance
-export let authenticator = new Authenticator<User>(sessionStorage, {
+export let authenticator = new Authenticator<AuthenticatedUser>(sessionStorage, {
   sessionErrorKey: 'auth-session-error',
   sessionKey: 'auth-session',
 });
-
-// TODO(@pepplejoshua): replace the User type with a leaner type that only 
-// contains the necessary fields
+   
 authenticator.use(
   new FormStrategy(async ({ form, context }) => {
     let user_identification = form.get('user_identification');

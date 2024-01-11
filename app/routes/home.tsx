@@ -1,12 +1,15 @@
 import { type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
 
 export default function GbfHome() {
+  let user = useLoaderData<typeof loader>();
+  let user_name = user.username.toLowerCase();
+
   return (
     <div className="w-full">
       <h1 className="text-6xl font-bold text-center">
-        welcome to gbf
+        welcome to the beanstalk, { user_name }
       </h1>
 
       <Form method="post" action="/home" className="text-center w-full">
