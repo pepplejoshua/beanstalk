@@ -49,7 +49,7 @@ export default function GBF() {
         </div>
         
         <div className="mt-10">
-          <button className="bg-black text-white px-10 py-4 rounded text-2xl" type="submit">
+          <button className="bg-black hover:bg-gray-900 text-white px-10 py-4 rounded text-2xl" type="submit">
             sign in
           </button>
         </div>
