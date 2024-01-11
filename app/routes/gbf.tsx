@@ -58,6 +58,23 @@ export default function GBF() {
   )
 }
 
+export async function loader({request}: LoaderFunctionArgs) {
+  // if the user is already logged in, redirect them to the home page
+  await authenticator.isAuthenticated(request, {
+    successRedirect: '/home',
+  });
+  
+  // otherwise, since we return to ourselves on a login error, we
+  // need to get the error from the session and return it from the 
+  // loader
+  let { getSession, commitSession } = sessionStorage;
+  let session = await getSession(request.headers.get('Cookie'));
+  let error = session.get(authenticator.sessionErrorKey);
+  return json({error}, {
+    headers: {'Set-Cookie': await commitSession(session)},
+  })
+}
+
 export async function action({request}: ActionFunctionArgs) {
   try {
     // try to login and make sure all errors are thrown
@@ -82,21 +99,4 @@ export async function action({request}: ActionFunctionArgs) {
       return err;
     }
   }
-}
-
-export async function loader({request}: LoaderFunctionArgs) {
-  // if the user is already logged in, redirect them to the home page
-  await authenticator.isAuthenticated(request, {
-    successRedirect: '/home',
-  });
-  
-  // otherwise, since we return to ourselves on a login error, we
-  // need to get the error from the session and return it from the 
-  // loader
-  let { getSession, commitSession } = sessionStorage;
-  let session = await getSession(request.headers.get('Cookie'));
-  let error = session.get(authenticator.sessionErrorKey);
-  return json({error}, {
-    headers: {'Set-Cookie': await commitSession(session)},
-  })
 }

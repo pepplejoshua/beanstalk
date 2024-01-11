@@ -7,7 +7,7 @@ export default function BeanLayout({ children }: { children: React.ReactNode }) 
       <div className="w-1/4 min-h-screen py-16 border-r-2">
         {/* keep stuff aligned in the column */}
         <div className="flex flex-col justify-center items-center">
-          <NavLink to="/home" className={({ isActive }) => isActive ? "text-3xl font-bold text-center text-gray-500" : "text-3xl font-bold text-center"}>
+          <NavLink to="/home" className={({ isActive }) => isActive ? "text-2xl font-bold text-center text-gray-500" : "text-2xl font-bold text-center"}>
             beanstalk
           </NavLink>
 
@@ -33,12 +33,10 @@ export default function BeanLayout({ children }: { children: React.ReactNode }) 
             </button>
           </Form>
         </div>
-
-        
       </div>
       
       {/* this is the actual right pane div */}
-      <div className="w-3/4 min-h-screen bg-gray-100 flex flex-col py-16 text-center">
+      <div className="w-3/4 min-h-screen flex flex-col py-16">
         { children }
       </div>
     </div>
