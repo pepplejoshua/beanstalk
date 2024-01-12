@@ -236,16 +236,17 @@ export async function action({request, params, context}: ActionFunctionArgs) {
   let { getSession, commitSession } = sessionStorage;
   let session = await getSession(request.headers.get('Cookie'));
   let currentUser = session.get(authenticator.sessionKey);
-  console.log("current user: ", currentUser);
 
   // if we have just updated the logged in user, update the session
   if (currentUser.id === updatingUserId) {
-    console.log("updating myself")
-    let updatedUser = await prisma.user.findUnique({
-      where: {
-        id: updatingUserId,
-      }
-    });
+    let updatedUser = {
+      ...currentUser,
+      first_name: formData.get("first_name"),
+      last_name: formData.get("last_name"),
+      username: formData.get("username"),
+      email: formData.get("email"),
+      company_role: formData.get("company_role"),
+    }
     session.set(authenticator.sessionKey, updatedUser)
     let headers = new Headers({'Set-Cookie': await commitSession(session)});
     // go to the /users page from here with the updated user
