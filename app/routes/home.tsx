@@ -9,7 +9,7 @@ export default function Summary() {
 
   return (
       <BeanLayout>
-        <h1 className="text-3xl font-bold text-center">
+        <h1 className="text-5xl font-bold text-center mb-10">
           hello, { user_name }
         </h1>
       </BeanLayout>
