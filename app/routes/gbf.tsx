@@ -6,7 +6,7 @@ import { sessionStorage } from "~/services/session.server";
 
 // this will be the entry point for the gbf area
 // it will present a login screen
-export default function GBF() {
+export default function GBFLogin() {
   const [showPassword, setShowPassword] = React.useState(false);
   // grab any data containing errors returned from the loader
   // TODO(@pepplejoshua): return the user_identification and

@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import BeanLayout from "~/components/bean_layout";
 import { authenticator } from "~/services/auth.server";
@@ -35,7 +35,7 @@ export default function EditUser() {
 
       { !fatalError && 
           <div className="mt-10 mx-auto w-3/4">
-            <form className="flex flex-col text-justify" method="POST" action="/users/edit">
+            <Form className="flex flex-col text-justify" method="POST">
               <label htmlFor="first_name" className="text-3xl font-bold mb-2">
                 first name
               </label>
@@ -100,7 +100,7 @@ export default function EditUser() {
               <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 submit
               </button>
-            </form>
+            </Form>
           </div>
       }
     </BeanLayout>
@@ -113,6 +113,8 @@ export async function loader({request, params}: LoaderFunctionArgs) {
   });
 
   let editingUsername = params.username;
+  let error = await request.text();
+  console.log("ERROR::::", error);
   let editingUser = await prisma.user.findUnique({
     where: {
       username: editingUsername,
@@ -154,31 +156,29 @@ export async function action({request, params}: ActionFunctionArgs) {
   invariant(typeof company_role === "string", "company role must be a string");
 
   if (error) {
-    return new Response(error, {
-      status: 401,
-    });
+    return new Error(error);
   }
 
-  let user = await prisma.user.update({
-    data: {
-      first_name,
-      last_name,
-      username,
-      email,
-      company_role,
-    },
-    where: {
-      username: updatingUser,
-    }
-  });
-
-  if (!user) {
-    error = "this user was not found";
+  try {
+    await prisma.user.update({
+      data: {
+        first_name,
+        last_name,
+        username,
+        email,
+        company_role,
+      },
+      where: {
+        username: updatingUser + 'sa',
+      }
+    });
+  } catch (err) {
+    throw new Error("this user was not found");
   }
 
   if (error) {
-    return new Response(error, {
-      status: 401,
-    });
+    throw new Error(error);
   }
+  // go to the /users page from here
+  return redirect("/users");
 }
