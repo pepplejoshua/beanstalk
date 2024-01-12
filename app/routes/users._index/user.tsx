@@ -6,7 +6,7 @@
 // - company role
 
 import { Link } from "@remix-run/react";
-import type { AuthenticatedUser } from "~/services/auth.server";
+import type { AuthenticatedUser } from "~/types";
 
 // They will be passed by props from the parent component
 // TODO(@sewedur): style this nicely
