@@ -5,15 +5,8 @@ import { FormStrategy } from "remix-auth-form";
 import invariant from "tiny-invariant";
 import * as bcrypt from "bcrypt";
 import { prisma } from "./prisma.server";
+import type { AuthenticatedUser } from "~/types";
 
-export type AuthenticatedUser = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  username: string;
-  email: string;
-  company_role: string;
-};
 
 // create an authenticator instance
 export let authenticator = new Authenticator<AuthenticatedUser>(sessionStorage, {
