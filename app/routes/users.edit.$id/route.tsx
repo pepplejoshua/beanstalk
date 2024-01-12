@@ -116,10 +116,10 @@ export async function loader({request, params}: LoaderFunctionArgs) {
     failureRedirect: '/gbf',
   });
 
-  let editingUsername = params.username;
+  let editingUserId = params.id;
   let editingUser = await prisma.user.findUnique({
     where: {
-      username: editingUsername,
+      id: editingUserId,
     }
   });
 
@@ -143,7 +143,7 @@ export async function loader({request, params}: LoaderFunctionArgs) {
 }
 
 export async function action({request, params, context}: ActionFunctionArgs) {
-  let updatingUser = params.username;
+  let updatingUserId = params.id;
 
   let formData = await request.formData();
   let error = undefined;
@@ -183,9 +183,9 @@ export async function action({request, params, context}: ActionFunctionArgs) {
                 equals: email,
               } },
             ],
-            username: {
+            id: {
               not: {
-                equals: updatingUser,
+                equals: updatingUserId,
               }
             }
           }  
@@ -211,7 +211,7 @@ export async function action({request, params, context}: ActionFunctionArgs) {
         company_role,
       },
       where: {
-        username: updatingUser,
+        id: updatingUserId,
       }
     });
   } catch (err) {
@@ -228,8 +228,30 @@ export async function action({request, params, context}: ActionFunctionArgs) {
     let headers = new Headers({'Set-Cookie': await commitSession(session)});
 
     // return to the edit page with the error
-    return redirect(`/users/edit/${updatingUser}`, {headers});
+    return redirect(`/users/edit/${updatingUserId}`, {headers});
   }
+
+
+  // do session stuff to set the user if the login was successful
+  let { getSession, commitSession } = sessionStorage;
+  let session = await getSession(request.headers.get('Cookie'));
+  let currentUser = session.get(authenticator.sessionKey);
+  console.log("current user: ", currentUser);
+
+  // if we have just updated the logged in user, update the session
+  if (currentUser.id === updatingUserId) {
+    console.log("updating myself")
+    let updatedUser = await prisma.user.findUnique({
+      where: {
+        id: updatingUserId,
+      }
+    });
+    session.set(authenticator.sessionKey, updatedUser)
+    let headers = new Headers({'Set-Cookie': await commitSession(session)});
+    // go to the /users page from here with the updated user
+    return redirect("/users", {headers});
+  }
+  
   
   // go to the /users page from here
   return redirect("/users");
