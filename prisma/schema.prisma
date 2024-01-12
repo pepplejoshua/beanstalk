@@ -11,13 +11,72 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  first_name String
-  last_name  String
-  email      String   @unique
-  password   String
-  username   String   @unique
-  company_role String @default("cofounder")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  first_name   String
+  last_name    String
+  email        String   @unique
+  password     String
+  username     String   @unique
+  company_role String   @default("cofounder")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ItemType {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// this covers the purchase of business inventory
+model Purchase {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  label             String
+  totalAmount       Float
+  pricePerItem      Float
+  quantityPurchased Int
+  itemTypeId        String   @map("itemTypeId") @db.ObjectId // actually an item type id
+  details           String?
+  purchaseDate      DateTime
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// this covers the sale of business inventory
+model Sale {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  label        String
+  totalAmount  Float
+  pricePerItem Float
+  quantitySold Int
+  itemTypeId   String   @map("itemTypeId") @db.ObjectId // actually an item type id
+  details      String?
+  saleDate     DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// this covers the expenses (operating and non-operating) that do not
+// fall under the purchase of inventory
+model Expense {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  label       String
+  totalAmount Float
+  details     String?
+  expenseDate DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Investment {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  label          String
+  totalAmount    Float
+  details        String?
+  investmentDate DateTime
+  investorUserId String   @map("investorUserId") @db.ObjectId // actually a user id
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
