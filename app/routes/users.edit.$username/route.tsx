@@ -32,10 +32,12 @@ export default function EditUser() {
               {fatalError}
             </p>
           </div>  
-      }
+      } 
+
+      {error &&
+        <p className="text-red-500 text-2xl mx-auto mt-10 w-3/4">{error}</p>}
 
       { !fatalError &&
-          ((error ? <p className="text-red-500 text-2xl mx-auto mt-10 w-3/4">{error}</p> : "") ||
           <div className="mt-10 mx-auto w-3/4">
             <Form className="flex flex-col text-justify" method="POST">
               <label htmlFor="first_name" className="text-3xl font-bold mb-2">
@@ -104,7 +106,7 @@ export default function EditUser() {
               </button>
             </Form>
           </div>
-      )}
+      }
     </BeanLayout>
   )
 }
@@ -209,14 +211,14 @@ export async function action({request, params, context}: ActionFunctionArgs) {
         company_role,
       },
       where: {
-        username: updatingUser + 'sa',
+        username: updatingUser,
       }
     });
   } catch (err) {
     if (err instanceof Error) {
       error = err.message;
     } else if (err instanceof Response) {
-      error = await err.text();
+      error = "contact iwarilama. there was an error updating the user"
     }
     
     // use session storage to pass the error to the loader
