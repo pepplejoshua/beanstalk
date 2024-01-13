@@ -27,11 +27,11 @@ export default function EditUser() {
       </h1>
 
       { fatalError &&
-          <div className="mt-20">
-            <p className="text-red-500 text-2xl text-center">
-              {fatalError}
-            </p>
-          </div>  
+        <div className="mt-20">
+          <p className="text-red-500 text-2xl text-center">
+            {fatalError}
+          </p>
+        </div>  
       } 
 
       {error &&
@@ -203,6 +203,9 @@ export async function action({request, params, context}: ActionFunctionArgs) {
     }
 
     await prisma.user.update({
+      where: {
+        id: updatingUserId,
+      },
       data: {
         first_name,
         last_name,
@@ -210,9 +213,6 @@ export async function action({request, params, context}: ActionFunctionArgs) {
         email,
         company_role,
       },
-      where: {
-        id: updatingUserId,
-      }
     });
   } catch (err) {
     if (err instanceof Error) {
@@ -254,6 +254,6 @@ export async function action({request, params, context}: ActionFunctionArgs) {
   }
   
   
-  // go to the /users page from here
+  // go to the users page from here
   return redirect("/users");
 }
