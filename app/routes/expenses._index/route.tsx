@@ -15,7 +15,7 @@ export default function ExpensesList() {
       </h1>
 
       <div className="ml-10 mt-5 flex flex-row">
-        <Link to="" 
+        <Link to={`view/0`}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded">
           new expense
         </Link>
