@@ -10,7 +10,7 @@ export default function Expense({expense}: {expense: ExpenseItem}) {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-    });
+  });
 
   return (
     <div className="mt-5 flex flex-row border-2 rounded-lg px-5 py-3">
@@ -35,7 +35,7 @@ export default function Expense({expense}: {expense: ExpenseItem}) {
 
       {/* add a section for editing a user */}
       <div className="w-1/4 items-center flex flex-row justify-end">
-        <Link to="" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <Link to={`view/${expense.id}?edit=true`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Edit Expense
         </Link>
       </div>

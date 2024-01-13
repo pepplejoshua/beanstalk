@@ -49,6 +49,7 @@ export default function EditUser() {
                 id="first_name"
                 defaultValue={editingUser?.first_name}
                 className="border-2 border-gray-500 rounded-lg p-2 mb-5"
+                required
               />
 
               <label htmlFor="last_name" className="text-3xl font-bold mb-2">
@@ -101,7 +102,7 @@ export default function EditUser() {
 
               {/* TODO(@pepplejoshua): add optional password field here. style fields like gbf page */}
 
-              <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg">
                 submit
               </button>
             </Form>
@@ -170,7 +171,6 @@ export async function action({request, params, context}: ActionFunctionArgs) {
     }
 
     // vcrify that non of the unique fields are taken:
-    // 
     let takenUsers = await prisma.user.findMany({
       where: {
         AND: [

@@ -28,7 +28,7 @@ export default function BeanLayout({ children }: { children: React.ReactNode }) 
           </NavLink>
 
           <Form method="post" action="/home" className="text-center w-full">
-            <button className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded text-xl mt-20" type="submit">
+            <button className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-lg text-xl mt-20" type="submit">
               sign out
             </button>
           </Form>
