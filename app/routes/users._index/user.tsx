@@ -32,7 +32,7 @@ export default function User({user}: {user: AuthenticatedUser}) {
       {/* add a section for editing a user */}
       <div className="w-1/3 items-center flex flex-row justify-end">
         <Link to={`edit/${user.id}`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Edit User
+          edit
         </Link>
       </div>
     </div>

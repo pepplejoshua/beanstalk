@@ -7,17 +7,18 @@ import { prisma } from "~/services/prisma.server";
 import { sessionStorage } from "~/services/session.server";
 
 export default function ViewExpense() {
-  let { expense, fatalError, error } = useLoaderData<typeof loader>();
-
-  const newMode = expense === undefined;
+  let { expense, fatalError, error, mode } = useLoaderData<typeof loader>();
+  invariant(mode === "new" || mode === "edit" || mode === "clone", "mode must be new, edit or clone");
   
+  let newMode = mode === "new" || mode === "clone";
+
   return (
     <BeanLayout>
       <h1 className="text-5xl font-bold text-center">
         { fatalError && 
           <p className="font-bold text-center text-5xl">error</p>  }
         <p className="text-5xl font-bold text-center mb-10">
-            {newMode ? "new expense" : "edit expense"}
+            {mode} expense
         </p>
       </h1>
 
@@ -89,7 +90,7 @@ export default function ViewExpense() {
             <button type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg"
             >
-              {newMode ? "create expense" : "update expense"}
+              {newMode ? "create" : "update"}
             </button>
           </Form>
         </div>
@@ -105,9 +106,12 @@ export async function loader({request, params}: LoaderFunctionArgs) {
   
   let url = new URL(request.url);
   let editExpense = url.searchParams.get("edit");
+  let cloneExpense = url.searchParams.get("clone");
   let expense = undefined;
-  if (editExpense) {
+  let errorKey = "new-expense-error";
+  if (editExpense || cloneExpense) {
     // we are editing an expense
+    errorKey = editExpense ? "edit-expense-error" : "clone-expense-error";
     let expenseId = params.eid;
     expense = await prisma.expense.findUnique({
       where: {
@@ -123,12 +127,13 @@ export async function loader({request, params}: LoaderFunctionArgs) {
 
   let { getSession, commitSession } = sessionStorage;
   let session = await getSession(request.headers.get('Cookie'));
-  let error = session.get(editExpense ? "edit-expense-error" : "new-expense-error");
+  let error = session.get(errorKey);
   
   return json({
     expense,
     fatalError,
     error,
+    mode: editExpense ? "edit" : (cloneExpense ? "clone" : "new" ),
   }, {
     headers: {
       "Set-Cookie": await commitSession(session),
@@ -139,8 +144,9 @@ export async function loader({request, params}: LoaderFunctionArgs) {
 export async function action({request, params}: ActionFunctionArgs) {
   let url = new URL(request.url);
   let editExpense = url.searchParams.get("edit");
+  let cloneExpense = url.searchParams.get("clone");
   let error = undefined;
-
+  let errorKey = "new-expense-error";
   
   try {
     let formData = await request.formData();
@@ -162,6 +168,7 @@ export async function action({request, params}: ActionFunctionArgs) {
     if (editExpense) {
       // we are editing an expense so we need the id of the expense we are editing
       let expenseId = params.eid;
+      errorKey = "edit-expense-error";
       // now we can update the expense
       await prisma.expense.update({
         where: {
@@ -175,7 +182,8 @@ export async function action({request, params}: ActionFunctionArgs) {
         },
       });
     } else {
-      // we are creating a new expense
+      errorKey = cloneExpense ? "clone-expense-error" : "new-expense-error";
+      // we are creating a new expense or cloning an existing expense
       await prisma.expense.create({
         data: {
           label,
@@ -195,11 +203,12 @@ export async function action({request, params}: ActionFunctionArgs) {
 
     let { getSession, commitSession } = sessionStorage;
     let session = await getSession(request.headers.get('Cookie'));
-    let errorKey = editExpense ? "edit-expense-error" : "new-expense-error";
     session.flash(errorKey, error);
     let headers = {'Set-Cookie': await commitSession(session)};
     if (editExpense) {
       return redirect(`/expenses/view/${params.eid}?edit=true`, {headers});
+    } else if (cloneExpense) {
+      return redirect(`/expenses/view/${params.eid}?clone=true`, {headers});
     }
 
     return redirect(`/expenses/view/${params.eid}`, {headers});
