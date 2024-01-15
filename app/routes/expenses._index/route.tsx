@@ -43,7 +43,6 @@ export async function loader({request}: LoaderFunctionArgs) {
       details: true,
       label: true,
       expenseDate: true,
-      createdAt: true,
     },
     orderBy: {
       expenseDate: 'desc',

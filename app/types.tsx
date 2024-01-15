@@ -13,5 +13,14 @@ export type ExpenseItem = {
   details: string | null;
   totalAmount: number;
   expenseDate: string;
-  createdAt: string;
+};
+
+export type SaleItem = {
+  id: string;
+  label: string;
+  details: string | null;
+  totalAmount: number;
+  pricePerItem: number;
+  quantitySold: number;
+  saleDate: string;
 };
