@@ -46,7 +46,7 @@ export default function Sale({sale}: {sale: SaleItem}) {
       </div>
 
       <div className="ml-20 w-1/5 flex flex-row items-center justify-center">
-        <span className="text-2xl font-bold text-gray-600">
+        <span className="text-2xl font-bold text-green-500">
           ₦{sale.totalAmount}
         </span>
       </div>

@@ -11,17 +11,17 @@ export default function BeanLayout({ children }: { children: React.ReactNode }) 
             beanstalk
           </NavLink>
 
-          <NavLink to="/expenses" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-gray-500" : "text-2xl font-bold text-center mt-10"}>
+          <NavLink to="/expenses" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-red-600" : "text-2xl font-bold text-center mt-10"}>
             expenses
           </NavLink>
 
-          <NavLink to="/sales" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-gray-500" : "text-2xl font-bold text-center mt-10"}>
+          <NavLink to="/sales" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-green-500" : "text-2xl font-bold text-center mt-10"}>
             sales
           </NavLink>
 
-          <p className="text-2xl font-bold text-center mt-10">
+          <NavLink to="/investments" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-orange-600" : "text-2xl font-bold text-center mt-10"}>
             investments
-          </p>
+          </NavLink>
 
           <NavLink to="/users" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-gray-500" : "text-2xl font-bold text-center mt-10"}>
             users

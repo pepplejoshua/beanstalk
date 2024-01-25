@@ -46,8 +46,8 @@ export default function Expense({expense}: {expense: ExpenseItem}) {
       </div>
 
       <div className="ml-20 w-1/5 flex flex-row items-center justify-center">
-        <span className="text-2xl font-bold text-gray-600">
-          ₦{expense.totalAmount}
+        <span className="text-2xl font-bold text-red-600">
+          -₦{expense.totalAmount}
         </span>
       </div>
 
