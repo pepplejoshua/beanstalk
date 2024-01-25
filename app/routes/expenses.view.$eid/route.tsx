@@ -110,7 +110,7 @@ export async function loader({request, params}: LoaderFunctionArgs) {
   let expense = undefined;
   let errorKey = "new-expense-error";
   if (editExpense || cloneExpense) {
-    // we are editing an expense
+    // we are editing an expense or cloning an existing expense
     errorKey = editExpense ? "edit-expense-error" : "clone-expense-error";
     let expenseId = params.eid;
     expense = await prisma.expense.findUnique({
@@ -128,7 +128,7 @@ export async function loader({request, params}: LoaderFunctionArgs) {
   }
 
   let fatalError = undefined;
-  if (expense === undefined && editExpense) {
+  if (expense === undefined && (editExpense || cloneExpense)) {
     fatalError = "expense not found";
   }
 
@@ -205,6 +205,7 @@ export async function action({request, params}: ActionFunctionArgs) {
     if (err instanceof Error) {
       error = err.message;
     } else if (typeof err === "string") {
+      // TODO(@pepplejoshua): look into why we even need this
       error = err;
     }
 

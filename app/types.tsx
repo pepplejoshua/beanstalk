@@ -18,7 +18,7 @@ export type ExpenseItem = {
 export type SaleItem = {
   id: string;
   label: string;
-  details: string | null;
+  details: string;
   totalAmount: number;
   pricePerItem: number;
   quantitySold: number;

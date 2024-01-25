@@ -22,14 +22,6 @@ model User {
   updatedAt    DateTime @updatedAt
 }
 
-model ItemType {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
 // this covers the purchase of business inventory
 model Purchase {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -37,7 +29,6 @@ model Purchase {
   totalAmount       Float
   pricePerItem      Float
   quantityPurchased Int
-  itemTypeId        String   @map("itemTypeId") @db.ObjectId // actually an item type id
   details           String?
   purchaseDate      DateTime
   createdAt         DateTime @default(now())
@@ -51,8 +42,7 @@ model Sale {
   totalAmount  Float
   pricePerItem Float
   quantitySold Int
-  itemTypeId   String   @map("itemTypeId") @db.ObjectId // actually an item type id
-  details      String?
+  details      String @default("snails")
   saleDate     DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
