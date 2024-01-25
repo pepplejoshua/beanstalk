@@ -22,19 +22,6 @@ model User {
   updatedAt    DateTime @updatedAt
 }
 
-// this covers the purchase of business inventory
-model Purchase {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  label             String
-  totalAmount       Float
-  pricePerItem      Float
-  quantityPurchased Int
-  details           String?
-  purchaseDate      DateTime
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-}
-
 // this covers the sale of business inventory
 model Sale {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId

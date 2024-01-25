@@ -17,9 +17,11 @@ export default function ViewExpense() {
       <h1 className="text-5xl font-bold text-center">
         { fatalError && 
           <p className="font-bold text-center text-5xl">error</p>  }
-        <p className="text-5xl font-bold text-center mb-10">
-            {mode} expense
-        </p>
+        { !fatalError &&
+          <p className="text-5xl font-bold text-center mb-10">
+              {mode} expense
+          </p>
+        }
       </h1>
 
       { fatalError &&

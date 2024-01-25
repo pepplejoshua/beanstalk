@@ -15,12 +15,14 @@ export default function ViewSale() {
   function getSalePricePerItem() {
     let totalAmount = document.getElementById("totalAmount") as HTMLInputElement;
     let quantitySold = document.getElementById("quantitySold") as HTMLInputElement;
+    let pricePerItemDisplay = document.getElementById("pricePerItemDisplay") as HTMLInputElement;
     let pricePerItem = document.getElementById("pricePerItem") as HTMLInputElement;
     let totalAmountValue = parseFloat(totalAmount.value);
     let quantitySoldValue = parseFloat(quantitySold.value);
     let pricePerItemValue = totalAmountValue / quantitySoldValue;
     // limit to 2 decimal places
     pricePerItemValue = Math.round(pricePerItemValue * 100) / 100;
+    pricePerItemDisplay.value = pricePerItemValue.toString();
     pricePerItem.value = pricePerItemValue.toString();
   }
 
@@ -29,9 +31,11 @@ export default function ViewSale() {
       <h1 className="text-5xl font-bold text-center">
         { fatalError && 
           <p className="font-bold text-center text-5xl">error</p>  }
-        <p className="text-5xl font-bold text-center mb-10">
-            {mode} sale
-        </p>
+        { !fatalError &&
+          <p className="text-5xl font-bold text-center mb-10">
+              {mode} sale
+          </p>
+        }
       </h1>
 
       { fatalError &&
@@ -108,13 +112,20 @@ export default function ViewSale() {
                   price per item
                 </label>
                 <input
-                  type="number"
-                  name="pricePerItem"
-                  id="pricePerItem"
+                  type="string"
+                  name="pricePerItemDisplay"
+                  id="pricePerItemDisplay"
                   defaultValue={sale?.pricePerItem}
                   className="border-2 border-gray-500 rounded-lg p-2 mb-5"
                   disabled
                   required
+                />
+
+                <input
+                  type="hidden"
+                  name="pricePerItem"
+                  id="pricePerItem"
+                  defaultValue={sale?.pricePerItem}
                 />
               </div>
             </div>
@@ -206,7 +217,60 @@ export async function action({request, params}: ActionFunctionArgs) {
   let errorKey = "new-sale-error";
 
   try {
-    // do stuff
+    let formData = await request.formData();
+    let label = formData.get("label");
+    invariant(typeof label === "string", "label must be a string");
+    let details = formData.get("details");
+    invariant(typeof details === "string", "details must be a string");
+    let totalAmount = formData.get("totalAmount");
+    invariant(typeof totalAmount === "string", "total amount must be a string");
+    let totalAmountNum = Number(totalAmount);
+    invariant(!isNaN(totalAmountNum), "total amount must be a number");
+    let pricePerItem = formData.get("pricePerItem");
+    invariant(typeof pricePerItem === "string", "price per item must be a number");
+    let pricePerItemNum = Number(pricePerItem);
+    invariant(!isNaN(pricePerItemNum), "price per item must be a number");
+    let quantitySold = formData.get("quantitySold");
+    invariant(typeof quantitySold === "string", "quantity sold must be a string");
+    let quantitySoldNum = Number(quantitySold);
+    invariant(!isNaN(quantitySoldNum), "quantity sold must be a number");
+    let saleDate = formData.get("saleDate");
+    invariant(typeof saleDate === "string", "sale date must be a string");
+    let saleDateObj = new Date(saleDate);
+    invariant(!isNaN(saleDateObj.getTime()), "sale date must be a valid date");
+
+    if (editSale) {
+      // we are editing a sale so we need the id of the sale we are editing
+      let saleId = params.sid;
+      errorKey = "edit-sale-error";
+      // update the sale
+      await prisma.sale.update({
+        where: {
+          id: saleId,
+        },
+        data: {
+          label,
+          details,
+          totalAmount: totalAmountNum,
+          pricePerItem: pricePerItemNum,
+          quantitySold: quantitySoldNum,
+          saleDate: saleDateObj,
+        },
+      });
+    } else {
+      errorKey = cloneSale ? "clone-sale-error" : "new-sale-error";
+      // we are creating a sale or cloning an existing sale
+      await prisma.sale.create({
+        data: {
+          label,
+          details,
+          totalAmount: totalAmountNum,
+          pricePerItem: pricePerItemNum,
+          quantitySold: quantitySoldNum,
+          saleDate: saleDateObj,
+        },
+      });
+    }
   } catch (err) {
     // handle any errors
     if (err instanceof Error) {
