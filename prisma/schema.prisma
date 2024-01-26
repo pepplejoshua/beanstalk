@@ -51,9 +51,10 @@ model Investment {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   label          String
   totalAmount    Float
-  details        String?
+  details        String @default("financing")
   investmentDate DateTime
-  investorUserId String   @map("investorUserId") @db.ObjectId // actually a user id
+  // TODO(@pepplejoshua): how do we represent multiple investors?
+  // investorUserId String   @map("investorUserId") @db.ObjectId // actually a user id
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

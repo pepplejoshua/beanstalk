@@ -1,11 +1,10 @@
 import { Link } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
-import type { SaleItem } from "~/types";
+import type { InvestmentItem } from "~/types";
 
-export default function Sale({sale}: {sale: SaleItem}) {
-  // format date to show readable date: Fri, 12 Feb 2021
-  const saleDate = new Date(sale.saleDate);
-  const formattedDate = saleDate.toLocaleDateString('en-US', {
+export default function Investment({investment}: {investment: InvestmentItem})  {
+  const investmentDate = new Date(investment.investmentDate);
+  const formattedDate = investmentDate.toLocaleDateString('en-US', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -29,35 +28,34 @@ export default function Sale({sale}: {sale: SaleItem}) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
   return (
     <div className="mt-5 flex flex-row border-2 rounded-lg px-5 py-3">
       <div className="w-2/5 flex flex-col">
         <h1 className="text-3xl font-bold">
-          {sale.label}
+          {investment.label}
         </h1>
         <h2 className="italic text-sm">
           {formattedDate}
         </h2>
           
         <span className="text-lg font-bold text-gray-600">
-          {sale.details}
+          {investment.details}
         </span>
       </div>
 
       <div className="ml-20 w-1/5 flex flex-row items-center justify-center">
-        <span className="text-2xl font-bold text-green-500">
-          ₦{sale.totalAmount}
+        <span className="text-2xl font-bold text-blue-600">
+          ₦{investment.totalAmount}
         </span>
       </div>
 
-      {/* add a section for editing a sale */}
+      {/* add a section for editing an investment */}
       <div className="w-2/5 items-center flex flex-row justify-end">
-        <Link to={`view/${sale.id}?edit=true`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <Link to={`view/${investment.id}?edit=true`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           edit
         </Link>
 
-        <Link to={`view/${sale.id}?clone=true`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-3">
+        <Link to={`view/${investment.id}?clone=true`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-3">
           clone
         </Link>
 
@@ -70,9 +68,10 @@ export default function Sale({sale}: {sale: SaleItem}) {
         {/* popover */}
         { showPopover && (
           <div ref={popoverRef} className="absolute border-2 p-4 rounded-lg shadow-xl bg-white -mt-10 -ml-8">
-            <p className="text-lg font-bold">Are you sure you want to delete this sale?</p>
+            <p className="text-lg font-bold">Are you sure you want to delete this investment?</p>
+
             <div className="flex flex-row justify-end">
-              <Link reloadDocument to={`/sales/delete/${sale.id}`} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-5 mr-3">
+              <Link reloadDocument to={`/investments/delete/${investment.id}`} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-5 mr-3">
                 yes
               </Link>
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5" onClick={() => setShowPopover(false)}>

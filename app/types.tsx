@@ -24,3 +24,11 @@ export type SaleItem = {
   quantitySold: number;
   saleDate: string;
 };
+
+export type InvestmentItem = {
+  id: string;
+  label: string;
+  details: string;
+  totalAmount: number;
+  investmentDate: string;
+};

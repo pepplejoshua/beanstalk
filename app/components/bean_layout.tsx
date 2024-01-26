@@ -19,7 +19,7 @@ export default function BeanLayout({ children }: { children: React.ReactNode }) 
             sales
           </NavLink>
 
-          <NavLink to="/investments" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-orange-600" : "text-2xl font-bold text-center mt-10"}>
+          <NavLink to="/investments" className={({ isActive }) => isActive ? "text-2xl font-bold text-center mt-10 text-blue-600" : "text-2xl font-bold text-center mt-10"}>
             investments
           </NavLink>
 
