@@ -223,7 +223,6 @@ export async function action({request, params}: ActionFunctionArgs) {
     let details = formData.get("details");
     invariant(typeof details === "string", "details must be a string");
     let totalAmount = formData.get("totalAmount");
-    invariant(typeof totalAmount === "string", "total amount must be a string");
     let totalAmountNum = Number(totalAmount);
     invariant(!isNaN(totalAmountNum), "total amount must be a number");
     let pricePerItem = formData.get("pricePerItem");
@@ -278,6 +277,8 @@ export async function action({request, params}: ActionFunctionArgs) {
     } else if (typeof err == "string") {
       // TODO(@pepplejoshua): look into why we even need this
       error = err;
+    } else {
+      error = "an unknown error occured while handling your request";
     }
 
     let { getSession, commitSession } = sessionStorage;
@@ -286,7 +287,7 @@ export async function action({request, params}: ActionFunctionArgs) {
     let headers = {'Set-Cookie': await commitSession(session)};
     if (editSale) {
       return redirect(`/sales/view/${params.sid}?edit=true`, {headers});
-    }else if (cloneSale) {
+    } else if (cloneSale) {
       return redirect(`/sales/view/${params.sid}?clone=true`, {headers});
     }
 

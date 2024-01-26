@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from "@remix-run/node";
+import { type ActionFunctionArgs, json, type LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import BeanLayout from "~/components/bean_layout";
@@ -149,4 +149,80 @@ export async function loader({params, request}: LoaderFunctionArgs) {
       "Set-Cookie": await commitSession(session),
     },
   })
+}
+
+export async function action({request, params}: ActionFunctionArgs) {
+  let url = new URL(request.url);
+  let editInvestment = url.searchParams.get("edit");
+  let cloneInvestment = url.searchParams.get("clone");
+  let error = undefined;
+  let errorKey = "new-investment-error";
+
+  try {
+    let formData = await request.formData();
+    let label = formData.get("label");
+    invariant(typeof label === "string", "label must be a string");
+    let details = formData.get("details");
+    invariant(typeof details === "string", "details must be a string");
+    let totalAmount = formData.get("totalAmount");
+    let totalAmountNum = Number(totalAmount);
+    invariant(!isNaN(totalAmountNum), "total amount must be a number");
+    let investmentDate = formData.get("investmentDate");
+    invariant(typeof investmentDate === "string", "investment date must be a string");
+    let investmentDateObj = new Date(investmentDate);
+    invariant(!isNaN(investmentDateObj.getTime()), "investment date must be a valid date");
+
+    if (editInvestment) {
+      let investmentId = params.iid;
+      errorKey = "edit-investment-error";
+      // update the investment
+      await prisma.investment.update({
+        where: {
+          id: investmentId,
+        },
+        data: {
+          label,
+          details,
+          totalAmount: totalAmountNum,
+          investmentDate: investmentDateObj,
+        },
+      });
+    } else {
+      errorKey = cloneInvestment ? "clone-investment-error" : "new-investment-error";
+      // we are creating or cloning an investment
+      await prisma.investment.create({
+        data: {
+          label,
+          details,
+          totalAmount: totalAmountNum,
+          investmentDate: investmentDateObj,
+        },
+      });
+    }
+  } catch (err) {
+    // handle any errors
+    if (err instanceof Error) {
+      error = err.message;
+    } else if (typeof err === "string") {
+      // TODO(@pepplejoshua): look into why we even need this
+      error = err;
+    } else {
+      error = "an unknown error occured while handling your request";
+    }
+
+    let { getSession, commitSession } = sessionStorage;
+    let session = await getSession(request.headers.get("Cookie"));
+    session.flash(errorKey, error);
+    let headers = {'Set-Cookie': await commitSession(session)};
+    if (editInvestment) {
+      return redirect(`/investments/view/${params.iid}?edit=true`, { headers });
+    } else if (cloneInvestment) {
+      return redirect(`/investments/view/${params.iid}?clone=true`, { headers });
+    }
+
+    return redirect("/investments/new", { headers });
+  }
+
+  // go to the investments page
+  return redirect("/investments");
 }

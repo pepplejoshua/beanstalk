@@ -42,7 +42,10 @@ export async function loader({request}: LoaderFunctionArgs) {
       label: true,
       details: true,
       investmentDate: true,
-    }
+    },
+    orderBy: {
+      investmentDate: "desc",
+    },
   });
 
   return investments;

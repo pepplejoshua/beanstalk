@@ -209,6 +209,8 @@ export async function action({request, params}: ActionFunctionArgs) {
     } else if (typeof err === "string") {
       // TODO(@pepplejoshua): look into why we even need this
       error = err;
+    } else {
+      error = "an unknown error occured while handling your request";
     }
 
     let { getSession, commitSession } = sessionStorage;
