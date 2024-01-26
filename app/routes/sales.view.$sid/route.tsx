@@ -10,7 +10,7 @@ export default function ViewSale() {
   let { sale, fatalError, error, mode } = useLoaderData<typeof loader>();
   invariant(mode === "new" || mode === "edit" || mode === "clone", "mode must be new, edit or clone");
 
-  let newMode = mode === "new" || mode === "clone";
+  let newMode = mode !== "edit";
 
   function getSalePricePerItem() {
     let totalAmount = document.getElementById("totalAmount") as HTMLInputElement;
